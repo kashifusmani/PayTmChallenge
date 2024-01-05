@@ -8,41 +8,41 @@ import org.apache.spark.sql.functions._
 
 object CountryStats {
 
-  private val invalid_defaults = Map(
+  private val invalidDefaults = Map(
     "TEMP" -> 9999.9,
     "WDSP" -> 999.9
   )
 
-  def get_country_average_metric_by_rank(input_df: DataFrame, metric: String, rank: Int, sort_order: String, metric_name: String): CountryResult = {
-    val interim_result = input_df
-      .filter(col(metric) =!= invalid_defaults(metric))
+  def getCountryAverageMetricByRank(inputDf: DataFrame, metric: String, rank: Int, sortOrder: String, metricName: String): CountryResult = {
+    val interimResult = inputDf
+      .filter(col(metric) =!= invalidDefaults(metric))
       .groupBy(col("COUNTRY_FULL").as("COUNTRY_NAME_FULL"))
       .agg(avg(col(metric)).as("METRIC"))
-      .orderBy(if (sort_order == "asc") asc("METRIC") else desc("METRIC"))
+      .orderBy(if (sortOrder == "asc") asc("METRIC") else desc("METRIC"))
       .withColumn("RANK", row_number().over(Window.orderBy(monotonically_increasing_id())))
       .filter(col("RANK") === rank)
       .select(resultSchema.map(field => col(field.name)): _*)
-
-    val firstRow = interim_result.first()
+    //TODO: What if rank is not in the dataset.
+    val firstRow = interimResult.first()
 
     CountryResult(
       firstRow.getAs[String]("COUNTRY_NAME_FULL"),
       firstRow.getAs[Double]("METRIC"),
       firstRow.getAs[Int]("RANK"),
-      metric_name
+      metricName
     )
   }
 
-  def get_country_with_consecutive_days_indicators(input_df: DataFrame, metric: String, metric_index: Int, metric_name: String): CountryResult = {
+  def getCountryWithConsecutiveDaysOfIndicator(inputDf: DataFrame, metric: String, metricIndex: Int, metricName: String): CountryResult = {
     val tf = "metricValue"
     val group = "group"
 
     val windowByCountry = Window.partitionBy("COUNTRY_FULL").orderBy("YEARMODA")
     val windowByCountryAndGroup = Window.partitionBy("COUNTRY_FULL", group).orderBy("YEARMODA")
 
-    val groupedDF = input_df
+    val groupedDF = inputDf
       .filter(length(col(metric)) === metric.length)
-      .withColumn(tf, split(col(metric), "").getItem(metric_index))
+      .withColumn(tf, split(col(metric), "").getItem(metricIndex))
       .withColumn("prev_date", lag("YEARMODA", 1).over(windowByCountry))
       .withColumn(group, when(
         (col(tf) === "1") &&
@@ -69,7 +69,7 @@ object CountryStats {
       firstRow.getAs[String]("COUNTRY_FULL"),
       firstRow.getAs[Double]("max_consecutive_ones"),
       1,
-      metric_name
+      metricName
     )
 
   }

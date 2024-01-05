@@ -1,7 +1,7 @@
 package com.paytm.conf
 
 import org.scalatest.funsuite.AnyFunSuite
-import com.paytm.conf.WeatherStatsConf
+
 class WeatherStatsConfTest extends AnyFunSuite {
   test("Conf is working: HappyPath") {
     val app_name = "PayTm"

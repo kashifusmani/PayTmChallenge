@@ -1,11 +1,11 @@
 package com.paytm.preprocessing
 
 
-import org.scalatest.funsuite.AnyFunSuite
-import com.paytm.preprocessing.CountryStatsPreProcessing._
-import org.apache.spark.sql.{Row, SparkSession}
 import com.github.mrpowers.spark.fast.tests.DataFrameComparer
-import org.apache.spark.sql.functions._
+import com.paytm.preprocessing.CountryStatsPreProcessing._
+import org.apache.spark.sql.SparkSession
+import org.scalatest.funsuite.AnyFunSuite
+
 class CountryStatsPreProcessingTest extends AnyFunSuite with DataFrameComparer {
   test("join_station_countries") {
     val spark = SparkSession.builder()
@@ -40,7 +40,7 @@ class CountryStatsPreProcessingTest extends AnyFunSuite with DataFrameComparer {
     val stationDf = stationList.toDF(stationColumns: _*)
     val countryDf = countryList.toDF(countryCols: _*)
 
-    val resultDf = join_station_countries(stationDf, countryDf)
+    val resultDf = joinStationCountries(stationDf, countryDf)
 
     val expectedData = Seq(
       (1, "India"),
@@ -78,7 +78,7 @@ class CountryStatsPreProcessingTest extends AnyFunSuite with DataFrameComparer {
 
     val stationDf = weatherStats.toDF(weatherCols: _*)
 
-    val resultDf = filter_for_valid_dates(stationDf)
+    val resultDf = filterForValidDates(stationDf)
 
     val expectedData = Seq(
       (1, 20201010),
@@ -112,7 +112,7 @@ class CountryStatsPreProcessingTest extends AnyFunSuite with DataFrameComparer {
 
     val stationDf = weatherStats.toDF(weatherCols: _*)
 
-    val resultDf = filter_year(stationDf, 2020)
+    val resultDf = filterYear(stationDf, 2020)
 
     val expectedData = Seq(
       (1, 20201010),
@@ -132,10 +132,10 @@ class CountryStatsPreProcessingTest extends AnyFunSuite with DataFrameComparer {
     import spark.sqlContext.implicits._
 
     val mainDfData = Seq(
-      ("010260",99999,20190101,26.1),
-      ("010260",99999,20190102,24.9),
-      ("010261",99999,20190103,31.7),
-      ("",99999,20190103,31.7)
+      ("010260", 99999, 20190101, 26.1),
+      ("010260", 99999, 20190102, 24.9),
+      ("010261", 99999, 20190103, 31.7),
+      ("", 99999, 20190103, 31.7)
     )
 
     val mainDfCols = Seq(
@@ -159,7 +159,7 @@ class CountryStatsPreProcessingTest extends AnyFunSuite with DataFrameComparer {
     val mainDf = mainDfData.toDF(mainDfCols: _*)
     val stationCountryDf = station_country_data.toDF(station_country_cols: _*)
 
-    val resultDf = join_main_df_with_station_country(mainDf, stationCountryDf)
+    val resultDf = joinMainDfWithStationCountry(mainDf, stationCountryDf)
 
     val expectedData = Seq(
       (99999, 20190101, 26.1, "010260", "Canada"),
@@ -178,7 +178,6 @@ class CountryStatsPreProcessingTest extends AnyFunSuite with DataFrameComparer {
     val expectedDf = expectedData.toDF(expectedCols: _*)
 
     assertSmallDataFrameEquality(resultDf, expectedDf)
-
 
 
   }
