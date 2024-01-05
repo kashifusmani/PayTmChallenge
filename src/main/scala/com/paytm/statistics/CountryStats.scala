@@ -10,10 +10,33 @@ object CountryStats {
 
   private val invalidDefaults = Map(
     "TEMP" -> 9999.9,
+    "DEWP" -> 9999.9,
+    "SLP" -> 9999.9,
+    "STP" -> 9999.9,
+    "VISIB" ->  999.9,
     "WDSP" -> 999.9
   )
 
-  def getCountryAverageMetricByRank(inputDf: DataFrame, metric: String, rank: Int, sortOrder: String, metricName: String): CountryResult = {
+  /**
+   * This function can be used to calculate the Country and average of the any Mean metric: TEMP, DEWP, SLP, STP, VISIB, WDSP.
+   * rank and sortOrder should be combined to get the country with the desired rank and average metric.
+   * For ex:
+   *  rank = 1 and sortOrder = desc : Gives the country with Highest value for the average metric.
+   *  rank = 2 and sortOrder = asc : Gives the country with Second Lowest value for the average metric.
+   * @param inputDf
+   * @param metric name of field: TEMP, DEWP, etc
+   * @param rank can be used to calculate country with a given rank for the average metric highest(1), second highest(2), etc
+   * @param sortOrder "asc" or "desc"
+   * @param metricName Used for output purposes only, ex "Country with second lowest average mean temperature"
+   * @return
+   */
+  def getCountryAverageMetricByRank(
+                                     inputDf: DataFrame,
+                                     metric: String,
+                                     rank: Int,
+                                     sortOrder: String,
+                                     metricName: String
+                                   ): CountryResult = {
     val interimResult = inputDf
       .filter(col(metric) =!= invalidDefaults(metric))
       .groupBy(col("COUNTRY_FULL").as("COUNTRY_NAME_FULL"))
@@ -22,7 +45,6 @@ object CountryStats {
       .withColumn("RANK", row_number().over(Window.orderBy(monotonically_increasing_id())))
       .filter(col("RANK") === rank)
       .select(resultSchema.map(field => col(field.name)): _*)
-    //TODO: What if rank is not in the dataset.
     val firstRow = interimResult.first()
 
     CountryResult(
@@ -33,7 +55,23 @@ object CountryStats {
     )
   }
 
-  def getCountryWithConsecutiveDaysOfIndicator(inputDf: DataFrame, metric: String, metricIndex: Int, metricName: String): CountryResult = {
+  /**
+   * This function should be used the calculate the country with most consecutive days of indicators in the field FRSHTT
+   * Ex:
+   *  To calculate most consecutive days of Fog, metricIndex = 0
+   *  To calculate most consecutive days of Tornado or Funnel Cloud, metricIndex = 5
+   * @param inputDf
+   * @param metric name of field, example FRSHTT
+   * @param metricIndex valid values are 0 - 5
+   * @param metricName Used for output purposes only, ex "Country with most consecutive days of Fog"
+   * @return
+   */
+  def getCountryWithConsecutiveDaysOfIndicator(
+                                                inputDf: DataFrame,
+                                                metric: String,
+                                                metricIndex: Int,
+                                                metricName: String
+                                              ): CountryResult = {
     val tf = "metricValue"
     val group = "group"
 

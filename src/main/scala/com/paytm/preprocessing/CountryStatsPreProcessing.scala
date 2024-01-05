@@ -10,6 +10,11 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 import java.nio.file.Paths
 import scala.io.Source
 
+/**
+ * This class is meant for functions that are used to perform any
+ * preprocessing(filtering invalid values, data preparation, etc)
+ * prior to actual usage of the data for calculating metrics
+ */
 object CountryStatsPreProcessing {
   private val dateField = "YEARMODA"
   val dateFmt: String = "yyyyMMdd"
@@ -25,6 +30,14 @@ object CountryStatsPreProcessing {
       .filter(col("COUNTRY_ABBR").isNotNull)
   }
 
+  /**
+   * Clean the input countries file and write the output to a new file (in same directory as original file)
+   * so that all country names are surrounded by quotes.
+   *
+   * @param inputFilePath Path to existing countries file
+   * @param outputFileName  Name of the output file
+   * @return path of new file
+   */
   def cleanCountriesFile(inputFilePath: String, outputFileName: String): String = {
     val cleanedCountriesFilePath = Paths.get(inputFilePath).getParent.toString + "/" + outputFileName
 

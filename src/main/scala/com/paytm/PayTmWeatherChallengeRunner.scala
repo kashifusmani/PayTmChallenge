@@ -18,14 +18,6 @@ object PayTmWeatherChallengeRunner extends App {
     .getOrCreate()
   //TODO: Check run config to be able to make it run on cluster in distributed mode, set deploy mode, etc
 
-  // TODO: Also check if 2018 Dec has any data for 2019, and 2020 Jan has any data for 2019. Mention this in README
-  //TODO: Tell them that configuration can be used to toggle the metrics to be calculated.
-  //TODO: Add in README, logger configuration to be used
-  //TODO: Probably missing a few maven dependencies to be able to run on a cluster
-  //TODO: Readme add some methods can be refactored to make better unit testing
-  //TODO: Ideally I would like to write the result write after calculation.
-
-
   val stationDf = getStationDf(spark, conf.stationPath())
 
   val cleanedCountriesFilePath = cleanCountriesFile(conf.countryPath(), conf.cleanedCountriesFileName())
@@ -43,8 +35,12 @@ object PayTmWeatherChallengeRunner extends App {
 
   val dataWithCountry = joinMainDfWithStationCountry(weatherYearFiltered, stationCountryDf)
 
-  val hottestMeanTemp = getCountryAverageMetricByRank(dataWithCountry, "TEMP", 1, "desc", "Hottest Mean Temperature")
-  val secondHighestWindSpeed = getCountryAverageMetricByRank(dataWithCountry, "WDSP", 2, "desc", "Second Highest Wind Speed")
+  //Now we are ready to calculate the metrics
+  val hottestMeanTemp = getCountryAverageMetricByRank(
+    dataWithCountry, "TEMP", 1, "desc", "Hottest Mean Temperature")
+
+  val secondHighestWindSpeed = getCountryAverageMetricByRank(
+    dataWithCountry, "WDSP", 2, "desc", "Second Highest Wind Speed")
 
   val weatherAll = joinMainDfWithStationCountry(
     spark.read.format("csv").option("header", "true").schema(temperatureSchema).load(conf.dataPath() + "**"),
@@ -53,9 +49,12 @@ object PayTmWeatherChallengeRunner extends App {
   val weatherValidDates = filterForValidDates(weatherAll)
     .withColumn("YEARMODA", to_date(col("YEARMODA").cast(StringType), dateFmt))
 
-  val countryWithMostTornadoes = getCountryWithConsecutiveDaysOfIndicator(weatherValidDates, "FRSHTT", 5, "Most Tornadoes")
+
+  val countryWithMostTornadoes = getCountryWithConsecutiveDaysOfIndicator(
+    weatherValidDates, "FRSHTT", 5, "Most Tornadoes")
+  //Write the results to a file
   writeToFile(conf.resultOutputPath(),
     hottestMeanTemp.toString + "\n" + secondHighestWindSpeed.toString + "\n" + countryWithMostTornadoes.toString + "\n")
+  //Delete the countries file with quotes
   deleteCountriesFile(cleanedCountriesFilePath)
-
 }
