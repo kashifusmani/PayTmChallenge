@@ -8,7 +8,10 @@
 ```
 --app-name PayTm --master-url local[1] --station-path /Full/Path/To/stationlist.csv --country-path /Full/Path/To/countrylist.csv --data-path /Full/Path/To/data/ --year 2019 --cleaned-countries-file-name clean_countries.csv --result-output-path /Full/Path/To/result.txt
 ```
-3. If Running via IntelliJ, set "Add dependencies with 'provided' scope to classpath"
+3. If Running via IntelliJ, 
+   1. set "Add dependencies with 'provided' scope to classpath"
+   2. Make sure the same Java version is selected at all places. 
+   3. This code has been tested on Java 8 and Scala 2.13.12
     
 
 ## Limitations
