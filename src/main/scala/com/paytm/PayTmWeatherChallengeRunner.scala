@@ -57,6 +57,7 @@ object PayTmWeatherChallengeRunner extends App {
   write_to_file(conf.resultOutputPath(),
     hottest_mean_temp.toString + "\n" + second_highest_wind_speed.toString + "\n" + country_with_most_tornadoes.toString + "\n")
   //TODO: Ideally I would like to write the result write after calculation.
+  //TODO: remove underscores, make camel case
   delete_countries_file(cleanedCountriesFilePath)
 
   /* val countries = Seq(

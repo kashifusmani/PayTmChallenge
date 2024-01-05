@@ -72,5 +72,6 @@ object CountryStatsPreProcessing {
     main_df
       .filter(col("STN---").isNotNull)
       .join(station_country_df, main_df("STN---") === station_country_df("STN_NO"))
+      .drop("STN---")
   }
 }
