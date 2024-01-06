@@ -17,5 +17,6 @@ class WeatherStatsConf(arguments: Seq[String]) extends ScallopConf(arguments) {
   )
   val year: ScallopOption[Int] = opt[Int](required = true)
   val resultOutputPath: ScallopOption[String] = opt[String](required = true)
+  val sparkProperties: ScallopOption[String] = opt[String](required=false)
   verify()
 }

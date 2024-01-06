@@ -6,7 +6,7 @@
 
 2. Run Config: 
 ```
---app-name PayTm --master-url local[1] --station-path /Full/Path/To/stationlist.csv --country-path /Full/Path/To/countrylist.csv --data-path /Full/Path/To/data/ --year 2019 --cleaned-countries-file-name clean_countries.csv --result-output-path /Full/Path/To/result.txt
+--app-name PayTm --master-url local[1] --spark-properties spark.driver.cores=3,spark.submit.deployMode=client  --station-path /Full/Path/To/stationlist.csv --country-path /Full/Path/To/countrylist.csv --data-path /Full/Path/To/data/ --year 2019 --cleaned-countries-file-name clean_countries.csv --result-output-path /Full/Path/To/result.txt
 ```
 3. If Running via IntelliJ, 
    1. set "Add dependencies with 'provided' scope to classpath"

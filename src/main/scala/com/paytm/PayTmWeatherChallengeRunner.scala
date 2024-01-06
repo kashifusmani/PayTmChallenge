@@ -12,11 +12,25 @@ import org.apache.spark.sql.types._
 
 object PayTmWeatherChallengeRunner extends App {
   val conf = new WeatherStatsConf(args)
-  val spark = SparkSession.builder()
+  val sparkProperties: Array[(String, String)] =
+    if (!conf.sparkProperties.isEmpty) {
+      conf.sparkProperties()
+        .split(",")
+        .filter(x => x.startsWith("spark."))
+        .map(_.split("=")).map(arr => arr(0) -> arr(1))
+    } else {
+      Array()
+    }
+
+  val sparkBuilder = SparkSession.builder()
     .master(conf.masterUrl())
     .appName(conf.appName())
-    .getOrCreate()
-  //TODO: Check run config to be able to make it run on cluster in distributed mode, set deploy mode, etc
+
+  sparkProperties.foreach(
+    config => sparkBuilder.config(config._1, config._2)
+  )
+
+  val spark = sparkBuilder.getOrCreate
 
   val stationDf = getStationDf(spark, conf.stationPath())
 

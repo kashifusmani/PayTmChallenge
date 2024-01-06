@@ -80,12 +80,12 @@ class CountryStatsTest extends AnyFunSuite with DataFrameComparer {
       ("20230104", "Canada", "000001"),
       ("20230105", "Canada", "000001"),
       ("20230106", "Canada", "000001"),
-      ("20230107", "Canada", "000000"),
+      ("20230107", "Canada", "00001"),//Invalid Entry
       ("20230108", "Canada", "000001"),
-      ("20230109", "Canada", "00001"), //Invalid Entry
+      ("20230109", "Canada", "000001"),
 
       ("20240101", "India", "000001"),
-      ("20240102", "India", "00001"), //InvalidEntry
+      ("20240102", "India", "00001"), //Invalid Entry
       ("20240103", "India", "000001"),
       ("20240104", "India", "000001"),
       ("20240105", "India", "000000"),
@@ -96,7 +96,7 @@ class CountryStatsTest extends AnyFunSuite with DataFrameComparer {
       ("20240201", "Canada", "000001"),
       ("20240202", "Canada", "000001"),
       ("20240203", "Canada", "000001"),
-      ("20240204", "Canada", "000000"),
+      ("20240204", "Canada", "00001"),//Invalid Entry
       ("20240205", "Canada", "000000"),
       ("20240206", "Canada", "000000"),
       ("20240207", "Canada", "000000"),
