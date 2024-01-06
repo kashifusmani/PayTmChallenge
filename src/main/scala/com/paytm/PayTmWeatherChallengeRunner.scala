@@ -31,22 +31,22 @@ object PayTmWeatherChallengeRunner extends App {
   )
 
   val spark = sparkBuilder.getOrCreate
-
+  // Read station data
   val stationDf = getStationDf(spark, conf.stationPath())
-
+  // Clean countries file
   val cleanedCountriesFilePath = cleanCountriesFile(conf.countryPath(), conf.cleanedCountriesFileName())
 
   val countryDf = getCountriesDf(spark, cleanedCountriesFilePath)
-
+  // Join station and country
   val stationCountryDf = joinStationCountries(stationDf, countryDf)
-
+  //Read data only from the given year folder
   val weatherYear = spark.read.format("csv").option("header", "true").schema(temperatureSchema)
     .load(conf.dataPath() + conf.year())
-
+  //Remove any data that is not in propoer format
   val weatherYearValidDates = filterForValidDates(weatherYear)
-
+  //Remove any data that does not belong to this year
   val weatherYearFiltered = filterYear(weatherYearValidDates, conf.year())
-
+  // Join above with station and country dataframe
   val dataWithCountry = joinMainDfWithStationCountry(weatherYearFiltered, stationCountryDf)
 
   //Now we are ready to calculate the metrics
