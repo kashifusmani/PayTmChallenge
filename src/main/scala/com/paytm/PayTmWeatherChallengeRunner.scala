@@ -43,9 +43,9 @@ object PayTmWeatherChallengeRunner extends App {
   val weatherYear = spark.read.format("csv").option("header", "true").schema(temperatureSchema)
     .load(conf.dataPath() + conf.year())
   //Remove any data that is not in propoer format
-  val weatherYearValidDates = filterForValidDates(weatherYear)
+  val weatherYearValidDates = filterForValidDates(weatherYear, "YEARMODA")
   //Remove any data that does not belong to this year
-  val weatherYearFiltered = filterYear(weatherYearValidDates, conf.year())
+  val weatherYearFiltered = filterYear(weatherYearValidDates, conf.year(), "YEARMODA")
   // Join above with station and country dataframe
   val dataWithCountry = joinMainDfWithStationCountry(weatherYearFiltered, stationCountryDf)
 
@@ -60,8 +60,8 @@ object PayTmWeatherChallengeRunner extends App {
     spark.read.format("csv").option("header", "true").schema(temperatureSchema).load(conf.dataPath() + "**"),
     stationCountryDf
   )
-  val weatherValidDates = filterForValidDates(weatherAll)
-    .withColumn("YEARMODA", to_date(col("YEARMODA").cast(StringType), dateFmt))
+  val weatherValidDates = filterForValidDates(weatherAll, "YEARMODA")
+    .withColumn("YEARMODA", to_date(col("YEARMODA").cast(StringType), "yyyyMMdd"))
 
 
   val countryWithMostTornadoes = getCountryWithConsecutiveDaysOfIndicator(

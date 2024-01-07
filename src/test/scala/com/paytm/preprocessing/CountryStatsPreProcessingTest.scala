@@ -78,7 +78,7 @@ class CountryStatsPreProcessingTest extends AnyFunSuite with DataFrameComparer {
 
     val stationDf = weatherStats.toDF(weatherCols: _*)
 
-    val resultDf = filterForValidDates(stationDf)
+    val resultDf = filterForValidDates(stationDf, "YEARMODA")
 
     val expectedData = Seq(
       (1, 20201010),
@@ -112,7 +112,7 @@ class CountryStatsPreProcessingTest extends AnyFunSuite with DataFrameComparer {
 
     val stationDf = weatherStats.toDF(weatherCols: _*)
 
-    val resultDf = filterYear(stationDf, 2020)
+    val resultDf = filterYear(stationDf, 2020, "YEARMODA")
 
     val expectedData = Seq(
       (1, 20201010),

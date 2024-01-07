@@ -8,15 +8,6 @@ import org.apache.spark.sql.functions._
 
 object CountryStats {
 
-  private val invalidDefaults = Map(
-    "TEMP" -> 9999.9,
-    "DEWP" -> 9999.9,
-    "SLP" -> 9999.9,
-    "STP" -> 9999.9,
-    "VISIB" ->  999.9,
-    "WDSP" -> 999.9
-  )
-
   /**
    * This function can be used to calculate the Country and average of the any Mean metric: TEMP, DEWP, SLP, STP, VISIB, WDSP.
    * rank and sortOrder should be combined to get the country with the desired rank and average metric.
@@ -37,6 +28,14 @@ object CountryStats {
                                      sortOrder: String,
                                      metricName: String
                                    ): CountryResult = {
+    val invalidDefaults = Map(
+      "TEMP" -> 9999.9,
+      "DEWP" -> 9999.9,
+      "SLP" -> 9999.9,
+      "STP" -> 9999.9,
+      "VISIB" -> 999.9,
+      "WDSP" -> 999.9
+    )
     val interimResult = inputDf
       .filter(col(metric) =!= invalidDefaults(metric))
       .groupBy(col("COUNTRY_FULL").as("COUNTRY_NAME_FULL"))

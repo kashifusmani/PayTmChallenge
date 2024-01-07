@@ -16,9 +16,6 @@ import scala.io.Source
  * prior to actual usage of the data for calculating metrics
  */
 object CountryStatsPreProcessing {
-  private val dateField = "YEARMODA"
-  val dateFmt: String = "yyyyMMdd"
-
   def getStationDf(spark: SparkSession, stationFilePath: String): DataFrame = {
     spark.read
       .format("csv")
@@ -70,13 +67,13 @@ object CountryStatsPreProcessing {
       .select(col("STN_NO").cast(IntegerType), col("COUNTRY_FULL"))
   }
 
-  def filterForValidDates(inputDf: DataFrame): DataFrame = {
+  def filterForValidDates(inputDf: DataFrame, dateField: String): DataFrame = {
     inputDf
       .filter(col(dateField).isNotNull)
-      .filter(length(col(dateField)) === dateFmt.length)
+      .filter(length(col(dateField)) === "yyyyMMdd".length)
   }
 
-  def filterYear(inputDf: DataFrame, year: Int): DataFrame = {
+  def filterYear(inputDf: DataFrame, year: Int, dateField: String): DataFrame = {
     inputDf
       .filter(col(dateField).substr(0, 4) === year)
   }
