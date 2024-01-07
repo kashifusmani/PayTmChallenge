@@ -1,8 +1,10 @@
 # PayTmChallenge
+
+## DISCLAIMER
+The code has been tested and run successfully only on my personal laptop. As such, only running via IntelliJ/Code Editor is supported.
+The code has not been tested on a standalone cluster. However, it should be able to run on a cluster with minimal changes to the run config.
 ## How to run the app
-
 1. The main class is `com.paytm.PayTmWeatherChallengeRunner`
-
 
 2. Run Config: 
 ```
@@ -16,8 +18,7 @@
 
 ## Limitations
 1. While filtering the data for a year, it is possible that data for a year flows in to files from the previous or the following year. For example 2019 data could be present in 2018 Dec 31 file and 2020 Jan 1 file. My current solution does not takes this case into consideration.
-2. The code has been tested and ran successfully only on my personal laptop. However, it should be able to run on a cluster with minimal changes to the run config.
-3. pom.xml has most dependencies, yet certain dependencies might be missing to run on a cluster.
+2 pom.xml has most dependencies, yet certain dependencies might be missing to run on a cluster.
 
 ## Known Bugs
 1. CountryStatsPreProcessing.cleanCountriesFile() will break if the countries file has more than 2 columns.
