@@ -29,5 +29,13 @@ The code has not been tested on a standalone cluster. However, it should be able
 1. All the input parameters are mandatory, regardless of the metric being calculated.
 2. Input Configuration can be modified to decide which metric to calculate, for example metric_name=FRSHTT can be served via config.
 3. Logger has not been configured which would be required for a production use case.
-4. Certain methods(for example: the ones that read DataFrame from a file) can be refactored to be unit-tested.
-5. Present code writes the result to a file just once after all the given metrics are calculated. Instead, it can write the output multiple times as each metric becomes available.
+4. Present code writes the result to a file just once after all the given metrics are calculated. Instead, it can write the output multiple times as each metric becomes available.
+
+## Unit testing
+The following modules have been unit tested
+1. `WeatherStatsConf`
+2. `CountryResult`
+3. `CountryStats` - contains the main business logic
+4. `CountryStatsPreProcessing`
+
+However, certain methods in `FileUtils` and `CountryStatsPreProcessing` can be refactored for better unit testing.
