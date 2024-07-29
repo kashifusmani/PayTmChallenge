@@ -2,11 +2,13 @@ package com.paytm.statistics
 
 import com.paytm.objects.CountryResult
 import com.paytm.schema.WeatherSchemas._
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 
 object CountryStats {
+  val tf: Broadcast[String] = "metricValue"
 
   /**
    * This function can be used to calculate the Country and average of the any Mean metric: TEMP, DEWP, SLP, STP, VISIB, WDSP.
@@ -71,7 +73,7 @@ object CountryStats {
                                                 metricIndex: Int,
                                                 metricName: String
                                               ): CountryResult = {
-    val tf = "metricValue"
+
     val group = "group"
 
     val windowByCountry = Window.partitionBy("COUNTRY_FULL").orderBy("YEARMODA")
